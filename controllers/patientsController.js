@@ -284,10 +284,14 @@ const forgotPassword = async (req, res, next) => {
 
     await patient.save({validateBeforeSave: false}, resetToken)
 
-    return res.json({"message": "Reset token sent your email", "status": 200})
+    return res.json({
+      "message": "Reset token sent your email", 
+      "status": 200,
+      resetToken
+    })
 
   } catch (err) {
-    console.log(err)
+      console.log("Error in Sending Reset Password Token : ", err)
       return res.json({"message": "Something went wrong, try again!", err,  "status": 500});
   }
 }

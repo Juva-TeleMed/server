@@ -269,4 +269,29 @@ const loginWorker = async (req, res) => {
   }
 };
 
-export { verifyWorkerEmail, loginWorker, registerWorker };
+
+const forgotPassword = async (req, res, next) => {
+  try {
+    const worker = await Workers.findOne({email: req.body.email})
+
+    if(!worker) {
+      return res.status(404).json({ message: "Wworker not found" });
+    }
+
+    const resetToken = worker.createResetPasswordToken();
+
+    await worker.save({validateBeforeSave: false}, resetToken)
+
+    return res.json({
+      "message": "Reset token sent to your email address", 
+      "status": 200,
+      resetToken
+    })
+
+  } catch (err) {
+      console.log("Error in Sending Reset Password Token : ", err)
+      return res.json({"message": "Something went wrong, try again!", err,  "status": 500});
+  }
+};
+
+export { verifyWorkerEmail, loginWorker, registerWorker, forgotPassword };
