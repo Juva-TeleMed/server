@@ -4,6 +4,8 @@ import crypto from 'crypto';
 import { sendEmail } from '../utils/nodemailer.js';
 import { WorkersToken } from '../models/tokenModel.js';
 import { generateToken } from '../utils/verifyToken.js';
+import sentEmail from '../utils/email.js';
+
 
 // register new worker
 const registerWorker = async (req, res) => {
@@ -282,16 +284,38 @@ const forgotPassword = async (req, res, next) => {
 
     await worker.save({validateBeforeSave: false}, resetToken)
 
-    return res.json({
-      "message": "Reset token sent to your email address", 
-      "status": 200,
-      resetToken
-    })
+    const resetUrl = `${req.protocol}://${req.get("host")}/api/workers/reset-password/${resetToken}`
+    
+    const message = `We have received your password reset request. Please the link below to reset your password
+                    \n\n${resetUrl}\n\n Kindly know that the reset link will be valid for 10 minutes.`
+
+    try {
+      await sentEmail({
+        email:  worker.email,
+        subject: "Forgot password request received",
+        message: message
+      })
+
+      return res.status(200).json({
+        status: 200,
+        message: `An email has been sent to ${worker.email}. Follow the instructions in the email to continue`,
+      })
+
+    } catch (err) {
+        patient.passwordResetToken = undefined;
+        patient.passwordResetTokenExpires = undefined
+
+        await patient.save({validateBeforeSave: false})
+
+        console.log(err)
+        return  res.status(500).json({"message": "Error sending reset password link", err, "status": 500})
+    }
 
   } catch (err) {
       console.log("Error in Sending Reset Password Token : ", err)
-      return res.json({"message": "Something went wrong, try again!", err,  "status": 500});
+      return res.status(500).json({"message": "Something went wrong, try again!", err});
   }
 };
+
 
 export { verifyWorkerEmail, loginWorker, registerWorker, forgotPassword };
