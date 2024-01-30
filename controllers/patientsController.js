@@ -275,7 +275,26 @@ const loginPatient = async (req, res) => {
 
 const forgotPassword = async (req, res, next) => {
   try {
-    const patient = await Patients.findOne({email: req.body.email})
+    const { email } = req.body
+    if (!email) {
+      return res.json({
+        message: 'Email field required...',
+        status: 400,
+        success: false,
+      });
+    }
+
+    const trimmedEmail = email.trim();
+
+    // check for valid email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      return res.json({
+        message: 'Invalid input for email...',
+        success: false,
+        status: 400,
+      });
+    }
+    const patient = await Patients.findOne({email: trimmedEmail})
 
     if(!patient) {
       return res.status(404).json({ message: "Patient not found" });
@@ -283,9 +302,12 @@ const forgotPassword = async (req, res, next) => {
 
     const resetToken = patient.createResetPasswordToken();
 
+
     await patient.save({validateBeforeSave: false}, resetToken)
 
     const resetUrl = `${req.protocol}://${req.get("host")}/api/patients/reset-password/${resetToken}`
+    // console.log(resetUrl)
+    
     const message = `We have received your password reset request. Please the link below to reset your password
                     \n\n${resetUrl}\n\n Kindly know that the reset link will be valid for 10 minutes.`
 
@@ -295,7 +317,7 @@ const forgotPassword = async (req, res, next) => {
         subject: "Forgot password request received",
         message: message
       })
-
+      // console,log("Error")
       return res.status(200).json({
         status: 200,
         message: `An email has been sent to ${patient.email}. Follow the instructions in the email to continue`,
@@ -310,13 +332,6 @@ const forgotPassword = async (req, res, next) => {
         console.log(err)
         return  res.status(500).json({"message": "Error sending reset password link", err, "status": 500})
     }
-    
-
-    // return res.json({
-    //   "message": "Reset token sent your email", 
-    //   "status": 200,
-    //   resetToken
-    // })
 
   } catch (err) {
       console.log("Error in Sending Reset Password Token : ", err)
