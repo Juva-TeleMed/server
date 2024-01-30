@@ -5,6 +5,7 @@ import { PatientsToken } from '../models/tokenModel.js';
 import { sendEmail } from '../utils/nodemailer.js';
 import { error } from 'console';
 import { generateToken } from '../utils/verifyToken.js';
+import sentEmail from '../utils/email.js';
 
 
 
@@ -284,15 +285,42 @@ const forgotPassword = async (req, res, next) => {
 
     await patient.save({validateBeforeSave: false}, resetToken)
 
-    return res.json({
-      "message": "Reset token sent your email", 
-      "status": 200,
-      resetToken
-    })
+    const resetUrl = `${req.protocol}://${req.get("host")}/api/patients/reset-password/${resetToken}`
+    const message = `We have received your password reset request. Please the link below to reset your password
+                    \n\n${resetUrl}\n\n Kindly know that the reset link will be valid for 10 minutes.`
+
+    try {
+      await sentEmail({
+        email:  patient.email,
+        subject: "Forgot password request received",
+        message: message
+      })
+
+      return res.status(200).json({
+        status: 200,
+        message: `An email has been sent to ${patient.email}. Follow the instructions in the email to continue`,
+      })
+
+    } catch (err) {
+        patient.passwordResetToken = undefined;
+        patient.passwordResetTokenExpires = undefined
+
+        await patient.save({validateBeforeSave: false})
+
+        console.log(err)
+        return  res.status(500).json({"message": "Error sending reset password link", err, "status": 500})
+    }
+    
+
+    // return res.json({
+    //   "message": "Reset token sent your email", 
+    //   "status": 200,
+    //   resetToken
+    // })
 
   } catch (err) {
       console.log("Error in Sending Reset Password Token : ", err)
-      return res.json({"message": "Something went wrong, try again!", err,  "status": 500});
+      return res.status(500).json({"message": "Something went wrong, try again!", err});
   }
 }
 

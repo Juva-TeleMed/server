@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer';
 
+
+
 const sendEmail = async (email, link) => {
   try {
     //  create transporter
