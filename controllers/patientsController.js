@@ -6,6 +6,10 @@ import { sendEmail } from '../utils/nodemailer.js';
 import { error } from 'console';
 import { generateToken } from '../utils/verifyToken.js';
 
+
+
+
+
 const registerPatient = async (req, res) => {
   try {
     // registration logic here
@@ -267,4 +271,33 @@ const loginPatient = async (req, res) => {
   }
 };
 
-export { verifyPatientEmail, registerPatient, loginPatient };
+
+const forgotPassword = async (req, res, next) => {
+  try {
+    const patient = await Patients.findOne({email: req.body.email})
+
+    if(!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const resetToken = patient.createResetPasswordToken();
+
+    await patient.save({validateBeforeSave: false}, resetToken)
+
+    return res.json({"message": "Reset token sent your email", "status": 200})
+
+  } catch (err) {
+    console.log(err)
+      return res.json({"message": "Something went wrong, try again!", err,  "status": 500});
+  }
+}
+
+const resetPassword = async (req, res, next) => {
+  try {
+    
+  } catch (err) {
+    
+  }
+}
+
+export { verifyPatientEmail, registerPatient, loginPatient, forgotPassword };

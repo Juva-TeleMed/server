@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 
+
+
 const generateToken = async (res, user) => {
   try {
     const token = jwt.sign(
