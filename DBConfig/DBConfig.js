@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+
+
+// Load environment variables from .env file
 dotenv.config();
 
 const DBConfig = mongoose
@@ -10,7 +13,9 @@ const DBConfig = mongoose
     );
   })
   .catch((err) => {
-    console.log(`MongoDB failed to connect`);
+    console.log(err)
+    // console.log("Mongoose failed to connect")
+    
   });
 
 export default DBConfig;
