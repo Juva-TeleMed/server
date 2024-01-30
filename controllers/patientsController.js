@@ -300,4 +300,4 @@ const resetPassword = async (req, res, next) => {
   }
 }
 
-export { verifyPatientEmail, registerPatient, loginPatient, forgotPassword };
+export { verifyPatientEmail, registerPatient, loginPatient, forgotPassword, resetPassword };
