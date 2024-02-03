@@ -31,4 +31,41 @@ const sendEmail = async (email, link) => {
   }
 };
 
-export { sendEmail };
+// using nodemailer to change password
+const changePassword = async (email, link) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.HOST,
+      port: process.env.EMAIL_PORT,
+      secure: process.env.SECURE,
+      service: process.env.SERVICE,
+      auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+      },
+      tls: { rejectUnauthorized: false },
+    });
+
+    const info = await transporter.sendMail({
+      from: process.env.USER,
+      to: email,
+      subject: 'Password change',
+      text: 'Welcome',
+      html: `
+      <div>
+      <p>Kindly use this link to change your password. This expires in 30 mins</p>
+      <a href=${link}>Click Here to change your password</a>
+      </div>
+      `,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      message: 'Something happened',
+      status: 500,
+      success: false,
+    });
+  }
+};
+
+export { sendEmail, changePassword };
