@@ -15,6 +15,9 @@ app.use([
   express.urlencoded({ extended: true }),
 ]);
 
+app.get('/', (req, res) => {
+  res.send('Welcome to Juva-TeleMed');
+});
 app.use('/api/workers', workersRoute);
 app.use('/api/patients', patientsRoute);
 
