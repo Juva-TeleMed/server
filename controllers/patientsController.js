@@ -517,11 +517,12 @@ const getPatient = async (req, res) => {
       });
     }
 
+    const { password, ...others } = patient._doc;
     return res.json({
       message: 'Patient fetched successfully',
       success: true,
       status: 200,
-      patient,
+      patient: others,
     });
   } catch (error) {
     return res.json({
@@ -702,11 +703,12 @@ const updatePatient = async (req, res) => {
       });
     }
 
+    const { password, ...others } = patientUpdate._doc;
     return res.json({
       message: 'Patient updated successfully',
       success: true,
       status: 200,
-      patientUpdate,
+      patient: others,
     });
   } catch (error) {
     return res.json({
