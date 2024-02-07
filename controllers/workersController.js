@@ -788,10 +788,12 @@ const getWorker = async (req, res) => {
       });
     }
 
+    const { password, ...others } = doctor._doc;
     return res.json({
       message: 'Doctor fetched successfully',
       success: true,
       status: 200,
+      doctor: others,
     });
   } catch (error) {
     return res.json({

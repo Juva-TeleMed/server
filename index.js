@@ -9,7 +9,7 @@ const app = express();
 
 // middlewares
 app.use([
-  cors(),
+  cors('*'),
   cookieParser(),
   express.json(),
   express.urlencoded({ extended: true }),
