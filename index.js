@@ -9,7 +9,11 @@ const app = express();
 
 // middlewares
 app.use([
-  cors('*'),
+  cors({
+    origin: 'http://localhost:5174',
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }),
   cookieParser(),
   express.json(),
   express.urlencoded({ extended: true }),
