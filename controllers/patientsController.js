@@ -27,8 +27,8 @@ const registerPatient = async (req, res) => {
       !lastName ||
       !email ||
       !password ||
-      !confirmPassword
-      // !phoneNumber
+      !confirmPassword ||
+      !phoneNumber
     ) {
       return res.json({
         message: 'All fields are required',
@@ -109,7 +109,7 @@ const registerPatient = async (req, res) => {
       firstName,
       lastName,
       email,
-      // phoneNumber,
+      phoneNumber,
       password: hashedPassword,
     }).save();
 
