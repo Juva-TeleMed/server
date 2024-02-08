@@ -294,8 +294,9 @@ const loginPatient = async (req, res) => {
       message: 'Login successful',
       success: true,
       status: 200,
+      token,
       patient: others,
-      token
+  
     });
   } catch (error) {
     return res.json({
