@@ -16,6 +16,7 @@ const generateToken = async (res, user) => {
      // secure: false, // Include this if your app is served over HTTP
       secure: true, // Include this if your app is served over HTTPS
     });
+    return {token, user}
   } catch (error) {
     return res.json({
       message: 'Something happened',
