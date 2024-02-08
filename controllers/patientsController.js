@@ -253,7 +253,7 @@ const loginPatient = async (req, res) => {
     }
 
     // generate access token and send as httpOnly to the client
-    generateToken(res, patient);
+    const {token} = await generateToken(res, patient);
 
     const { password: hashedPassword, ...others } = patient._doc;
 
@@ -262,6 +262,7 @@ const loginPatient = async (req, res) => {
       success: true,
       status: 200,
       patient: others,
+      token
     });
   } catch (error) {
     return res.json({
