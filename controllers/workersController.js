@@ -550,7 +550,7 @@ const loginWorker = async (req, res) => {
     }
 
     // generate access token and send as httpOnly to the client
-    generateToken(res, worker);
+    const {token} = await generateToken(res, worker);
 
     const { password: hashedPassword, ...others } = worker._doc;
 
@@ -558,6 +558,7 @@ const loginWorker = async (req, res) => {
       message: 'Login successful',
       success: true,
       status: 200,
+      token,
       worker: others,
     });
   } catch (error) {
