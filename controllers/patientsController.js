@@ -255,38 +255,39 @@ const loginPatient = async (req, res) => {
     }
 
     // check if patient has a verified email
-    if (patient.isVerified === false) {
-      // check whether he has token
-      const token = await PatientsToken.findOne({
-        userId: patient._id,
-      });
+    // if (patient.isVerified === false) {
+    //   // check whether he has token
+    //   const token = await PatientsToken.findOne({
+    //     userId: patient._id,
+    //   });
 
-      if (token) {
-        return res.json({
-          message: 'Please verify the mail sent to you',
-        });
-      }
-      // generate another token
-      const createToken =
-        crypto.randomBytes(32).toString('hex') +
-        crypto.randomBytes(32).toString('hex');
+    //   if (token) {
+    //     return res.json({
+    //       message: 'Please verify the mail sent to you',
+    //     });
+    //   }
+    //   // generate another token
+    //   const createToken =
+    //     crypto.randomBytes(32).toString('hex') +
+    //     crypto.randomBytes(32).toString('hex');
 
-      const newToken = await PatientsToken({
-        token: createToken,
-        userId: patient._id,
-      }).save();
+    //   const newToken = await PatientsToken({
+    //     token: createToken,
+    //     userId: patient._id,
+    //   }).save();
 
-      const link = `${process.env.FRONTEND}/api/patients/confirm/${newToken.userId}/${newToken.token}`;
+    //   const link = `${process.env.FRONTEND}/api/patients/confirm/${newToken.userId}/${newToken.token}`;
 
-      sendEmail(patient.email, link);
-      return res.json({
-        message:
-          'Please visit your email for the verification link sent to you',
-      });
-    }
+    //   sendEmail(patient.email, link);
+    //   return res.json({
+    //     message:
+    //       'Please visit your email for the verification link sent to you',
+    //   });
+    // }
 
-    // generate access token and send as httpOnly to the client
-    generateToken(res, patient);
+    // // generate access token and send as httpOnly to the client
+    // const { token } = await generateToken(res, patient);
+    // console.log(token);
 
     const { password: hashedPassword, ...others } = patient._doc;
 
@@ -294,6 +295,7 @@ const loginPatient = async (req, res) => {
       message: 'Login successful',
       success: true,
       status: 200,
+      token,
       patient: others,
     });
   } catch (error) {

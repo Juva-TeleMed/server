@@ -518,39 +518,40 @@ const loginWorker = async (req, res) => {
     }
 
     // check if patient has a verified email
-    if (worker.isVerified === false) {
-      // check whether he has token
-      const token = await WorkersToken.findOne({
-        userId: worker._id,
-      });
+    // if (worker.isVerified === false) {
+    //   // check whether he has token
+    //   const token = await WorkersToken.findOne({
+    //     userId: worker._id,
+    //   });
 
-      if (token) {
-        return res.json({
-          message: 'Please verify the mail sent to you',
-        });
-      }
+    //   if (token) {
+    //     return res.json({
+    //       message: 'Please verify the mail sent to you',
+    //     });
+    //   }
 
-      // generate another token
-      const createToken =
-        crypto.randomBytes(32).toString('hex') +
-        crypto.randomBytes(32).toString('hex');
+    //   // generate another token
+    //   const createToken =
+    //     crypto.randomBytes(32).toString('hex') +
+    //     crypto.randomBytes(32).toString('hex');
 
-      const newToken = await WorkersToken({
-        token: createToken,
-        userId: worker._id,
-      }).save();
+    //   const newToken = await WorkersToken({
+    //     token: createToken,
+    //     userId: worker._id,
+    //   }).save();
 
-      const link = `${process.env.FRONTEND}/api/workers/confirm/${newToken.userId}/${newToken.token}`;
+    //   const link = `${process.env.FRONTEND}/api/workers/confirm/${newToken.userId}/${newToken.token}`;
 
-      sendEmail(worker.email, link);
-      return res.json({
-        message:
-          'Please visit your email for the verification link sent to you',
-      });
-    }
+    //   sendEmail(worker.email, link);
+    //   return res.json({
+    //     message:
+    //       'Please visit your email for the verification link sent to you',
+    //   });
+    // }
 
-    // generate access token and send as httpOnly to the client
-    generateToken(res, worker);
+    // // generate access token and send as httpOnly to the client
+    // const { token } = await generateToken(res, worker);
+    // console.log(token);
 
     const { password: hashedPassword, ...others } = worker._doc;
 
@@ -558,6 +559,7 @@ const loginWorker = async (req, res) => {
       message: 'Login successful',
       success: true,
       status: 200,
+      token,
       worker: others,
     });
   } catch (error) {
@@ -789,6 +791,7 @@ const getWorker = async (req, res) => {
     }
 
     const { password, ...others } = doctor._doc;
+
     return res.json({
       message: 'Doctor fetched successfully',
       success: true,
