@@ -42,6 +42,14 @@ const workersSchema = new mongoose.Schema(
         ],
       },
     ],
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    isDoctor: {
+      type: Boolean,
+      default: false,
+    },
 
     //     weeklyAvailability[0][dayOfWeek]: Monday
     // weeklyAvailability[0][availableTimeSlots][0][startTime]: 09:00 AM
