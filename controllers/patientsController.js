@@ -54,7 +54,8 @@ const updateVitals = async (req, res) => {
         bloodGlucoseLevel,
         bloodOxygen,
         bloodAllergies,
-      }
+      },
+      { new: true }
     );
 
     if (!patient) {
@@ -69,6 +70,7 @@ const updateVitals = async (req, res) => {
       message: 'Patient vitals saved successfully',
       success: true,
       status: 200,
+      patient,
     });
   } catch (error) {
     return res.json({
