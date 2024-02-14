@@ -8,6 +8,7 @@ import {
   patientForgotPassword,
   patientResetPassword,
   updatePatient,
+  updateVitals,
 } from '../controllers/patientsController.js';
 import { authToken } from '../utils/verifyToken.js';
 import multerUpload from '../middlewares/multer.js';
@@ -22,6 +23,8 @@ router.put(
   multerUpload.single('profileImg'),
   updatePatient
 );
+
+router.put('/update-vitals', authToken, updateVitals);
 router.get('/get-patient', authToken, getPatient);
 router.get('/confirm/:patientId/:token', verifyPatientEmail);
 

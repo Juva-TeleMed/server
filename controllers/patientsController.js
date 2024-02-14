@@ -7,6 +7,78 @@ import { error } from 'console';
 import { generateToken } from '../utils/verifyToken.js';
 import { handleFileUpload } from '../utils/cloudinary.js';
 
+const updateVitals = async (req, res) => {
+  try {
+    const {
+      bloodPressure,
+      weight,
+      temperature,
+      respiratoryRate,
+      sleepTime,
+      pulse,
+      height,
+      bloodGlucoseLevel,
+      bloodOxygen,
+      bloodAllergies,
+    } = req.body;
+
+    if (
+      !bloodPressure ||
+      !weight ||
+      !temperature ||
+      !respiratoryRate ||
+      !sleepTime ||
+      !pulse ||
+      !height ||
+      !bloodGlucoseLevel ||
+      !bloodOxygen ||
+      !bloodAllergies
+    ) {
+      return res.json({
+        message: 'All fields are required',
+        status: 400,
+        success: false,
+      });
+    }
+
+    const patient = await Patients.findByIdAndUpdate(
+      { _id: req.user._id },
+      {
+        bloodPressure,
+        weight,
+        temperature,
+        respiratoryRate,
+        sleepTime,
+        pulse,
+        height,
+        bloodGlucoseLevel,
+        bloodOxygen,
+        bloodAllergies,
+      }
+    );
+
+    if (!patient) {
+      return res.json({
+        message: 'Patient can not be found',
+        status: 404,
+        success: false,
+      });
+    }
+
+    return res.json({
+      message: 'Patient vitals saved successfully',
+      success: true,
+      status: 200,
+    });
+  } catch (error) {
+    return res.json({
+      message: 'Something happened',
+      status: 500,
+      success: false,
+    });
+  }
+};
+
 const registerPatient = async (req, res) => {
   try {
     // registration logic here
@@ -114,24 +186,26 @@ const registerPatient = async (req, res) => {
     }).save();
 
     // generate email verification link and send
-    const token =
-      crypto.randomBytes(32).toString('hex') +
-      crypto.randomBytes(32).toString('hex');
+    // const token =
+    //   crypto.randomBytes(32).toString('hex') +
+    //   crypto.randomBytes(32).toString('hex');
 
-    const newToken = await new PatientsToken({
-      userId: newPatient._id,
-      token,
-    }).save();
+    // const newToken = await new PatientsToken({
+    //   userId: newPatient._id,
+    //   token,
+    // }).save();
 
-    const link = `${process.env.FRONTEND}/api/patients/confirm/${newToken.userId}/${newToken.token}`;
+    // const link = `${process.env.FRONTEND}/api/patients/confirm/${newToken.userId}/${newToken.token}`;
     // const link = `${process.env.FRONTEND}/confirm/?patientId=${newToken.userId}&token=${newToken.token}`;
 
     // send email verification link to patient email address using nodemailer
-    sendEmail(newPatient.email, link);
+    // sendEmail(newPatient.email, link);
 
     return res.json({
-      message: 'Please open your email to verify your email',
+      message: 'Registration successful. You can login',
+      // message: 'Please open your email to verify your email',
       success: true,
+      status: 201,
     });
   } catch (error) {
     return res.json({
@@ -285,14 +359,11 @@ const loginPatient = async (req, res) => {
     //   });
     // }
 
-<<<<<<< HEAD
     // // generate access token and send as httpOnly to the client
     // const { token } = await generateToken(res, patient);
     // console.log(token);
-=======
     // generate access token and send as httpOnly to the client
-    const {token} = await generateToken(res, patient);
->>>>>>> 3680b9661b9fb8c86f723951e937ed62ca0004c4
+    const { token } = await generateToken(res, patient);
 
     const { password: hashedPassword, ...others } = patient._doc;
 
@@ -302,7 +373,6 @@ const loginPatient = async (req, res) => {
       status: 200,
       token,
       patient: others,
-  
     });
   } catch (error) {
     return res.json({
@@ -749,4 +819,5 @@ export {
   registerPatient,
   loginPatient,
   updatePatient,
+  updateVitals,
 };

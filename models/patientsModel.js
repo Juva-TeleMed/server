@@ -23,6 +23,16 @@ const patientsSchema = new mongoose.Schema(
     nextOfKin: { type: String },
     addressOfNextOfKin: { type: String },
     relationshipWithNextOfKin: { type: String },
+    bloodPressure: { type: String },
+    weight: { type: String },
+    temperature: { type: String },
+    respiratoryRate: { type: Number },
+    sleepTime: { type: Date },
+    pulse: { type: Number },
+    height: { type: Number },
+    bloodGlucoseLevel: { type: Number },
+    bloodOxygen: { type: Number },
+    bloodAllergies: { type: String },
 
     // phoneNumber: {
     //   countryCode: { type: String },
