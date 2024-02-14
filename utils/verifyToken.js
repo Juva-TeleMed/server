@@ -13,11 +13,18 @@ const generateToken = async (res, user) => {
       maxAge: 60 * 60 * 1 * 1000,
       sameSite: 'None',
       // sameSite: 'strict,
+<<<<<<< HEAD
       // secure: false, // Include this if your app is served over HTTP
       secure: true, // Include this if your app is served over HTTPS
     });
 
     return { token, user };
+=======
+     // secure: false, // Include this if your app is served over HTTP
+      secure: true, // Include this if your app is served over HTTPS
+    });
+    return {token, user}
+>>>>>>> 3680b9661b9fb8c86f723951e937ed62ca0004c4
   } catch (error) {
     return res.json({
       message: 'Something happened',

@@ -9,12 +9,7 @@ const app = express();
 
 // middlewares
 app.use([
-  cors({
-    origin: 'https://juva-telemed.vercel.app',
-    // origin: 'http://localhost:5174',
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  }),
+  cors('*'),
   cookieParser(),
   express.json(),
   express.urlencoded({ extended: true }),

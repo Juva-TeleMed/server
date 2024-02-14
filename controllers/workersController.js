@@ -549,9 +549,8 @@ const loginWorker = async (req, res) => {
     //   });
     // }
 
-    // // generate access token and send as httpOnly to the client
-    // const { token } = await generateToken(res, worker);
-    // console.log(token);
+    // generate access token and send as httpOnly to the client
+    generateToken(res, worker);
 
     const { password: hashedPassword, ...others } = worker._doc;
 
@@ -583,8 +582,6 @@ const workerForgotPassword = async (req, res) => {
       });
     }
 
-    console.log('done 1');
-
     const trimmedEmail = email.trim();
     // check for valid email
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
@@ -604,7 +601,6 @@ const workerForgotPassword = async (req, res) => {
         status: 404,
       });
     }
-    console.log('done 2');
 
     // check if token exist to know if reset link has been sent before
     const tokenExist = await WorkersToken.findOne({ userId: worker._id });
@@ -619,13 +615,11 @@ const workerForgotPassword = async (req, res) => {
         token,
       }).save();
 
-      console.log('done 3');
       // link to be sent to patient
       const link = `${process.env.FRONTEND}/api/workers/${newToken.userId}/allow-reset-password/${newToken.token}`;
 
       changePassword(email, link);
 
-      console.log('done 4');
       return res.json({
         message: 'Password reset link has been sent to your email address',
         status: 200,
@@ -633,10 +627,8 @@ const workerForgotPassword = async (req, res) => {
       });
     }
 
-    console.log('done 5');
     const link = `${process.env.FRONTEND}/api/workers/${newToken.userId}/allow-reset-password/${newToken.token}`;
     changePassword(email, link);
-    console.log('done 6');
 
     return res.json({
       message: 'Password reset link has been sent again to your email address ',
